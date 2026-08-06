@@ -68,6 +68,29 @@ export default function HomePage() {
           위치 확인이 안 돼서 전체 지역으로 검색했어요.
         </p>
       )}
+      <div className="space-y-2 border-t pt-4">
+        <p className="text-sm text-gray-600">
+          네이버 지도 앱이 없다면 먼저 설치해주세요.
+        </p>
+        <div className="flex gap-3">
+          <a
+            href="https://play.google.com/store/apps/details?id=com.nhn.android.nmap"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 rounded-lg border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100"
+          >
+            구글플레이에서 설치
+          </a>
+          <a
+            href="https://apps.apple.com/kr/app/id311867728"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 rounded-lg border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100"
+          >
+            앱스토어에서 설치
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
