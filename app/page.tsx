@@ -20,6 +20,7 @@ function openNaverMapSearch(query: string, coords: GeolocationCoordinates | null
 
 export default function HomePage() {
   const [status, setStatus] = useState<"idle" | "locating" | "error">("idle");
+  const [showSortGuide, setShowSortGuide] = useState(false);
 
   function handleFind(query: string) {
     if (!navigator.geolocation) {
@@ -59,6 +60,29 @@ export default function HomePage() {
             {button.label}
           </button>
         ))}
+      </div>
+      <div>
+        <button
+          onClick={() => setShowSortGuide((prev) => !prev)}
+          className="text-sm text-blue-600 underline"
+        >
+          검색 결과를 거리순으로 보는 방법
+        </button>
+        {showSortGuide && (
+          <div className="mt-2 rounded-lg bg-blue-50 p-4 text-left text-sm text-gray-700">
+            <ol className="list-decimal space-y-1 pl-4">
+              <li>위 버튼으로 네이버 지도를 열면 검색 결과 목록이 나와요.</li>
+              <li>목록 위쪽에 있는 &quot;관련도순&quot; 글자를 눌러요.</li>
+              <li>
+                나오는 목록에서 &quot;거리순&quot;을 선택하면 가까운 곳부터
+                순서대로 다시 정렬돼요.
+              </li>
+            </ol>
+            <p className="mt-2 text-xs text-gray-500">
+              네이버 지도 앱 버전에 따라 위치나 표현이 조금 다를 수 있어요.
+            </p>
+          </div>
+        )}
       </div>
       {status === "locating" && (
         <p className="text-sm text-gray-500">위치를 확인하는 중...</p>
