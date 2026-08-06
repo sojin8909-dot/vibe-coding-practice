@@ -1,14 +1,36 @@
 "use client";
 
 import { useState } from "react";
+import { findNearestShelter } from "@/lib/shelters";
 
-function openNaverMapSearch(coords: GeolocationCoordinates | null) {
-  const query = encodeURIComponent("무더위쉼터");
-  const url =
-    coords != null
-      ? `https://map.naver.com/p/search/${query}?c=${coords.longitude},${coords.latitude},15,0,0,0,dh`
-      : `https://map.naver.com/p/search/${query}`;
-  window.open(url, "_blank");
+function openWalkingDirections(from: GeolocationCoordinates) {
+  const nearest = findNearestShelter({ lat: from.latitude, lng: from.longitude });
+  const name = encodeURIComponent(nearest.name);
+
+  const appUrl =
+    `nmap://route/walk?slat=${from.latitude}&slng=${from.longitude}&sname=${encodeURIComponent("현위치")}` +
+    `&dlat=${nearest.lat}&dlng=${nearest.lng}&dname=${name}&appname=heatwave-guardian`;
+
+  const webFallbackUrl = `https://map.naver.com/p/search/${name}?c=${nearest.lng},${nearest.lat},17,0,0,0,dh`;
+
+  let appOpened = false;
+  const onVisibilityChange = () => {
+    if (document.hidden) appOpened = true;
+  };
+  document.addEventListener("visibilitychange", onVisibilityChange);
+
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = appUrl;
+  document.body.appendChild(iframe);
+
+  setTimeout(() => {
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+    document.body.removeChild(iframe);
+    if (!appOpened) {
+      window.open(webFallbackUrl, "_blank");
+    }
+  }, 1200);
 }
 
 export default function HomePage() {
@@ -16,7 +38,7 @@ export default function HomePage() {
 
   function handleFindShelter() {
     if (!navigator.geolocation) {
-      openNaverMapSearch(null);
+      setStatus("error");
       return;
     }
 
@@ -24,11 +46,10 @@ export default function HomePage() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setStatus("idle");
-        openNaverMapSearch(position.coords);
+        openWalkingDirections(position.coords);
       },
       () => {
         setStatus("error");
-        openNaverMapSearch(null);
       }
     );
   }
@@ -38,21 +59,22 @@ export default function HomePage() {
       <div>
         <h1 className="text-xl font-semibold">폭염지킴이</h1>
         <p className="text-sm text-gray-600">
-          버튼을 누르면 현재 위치 근처 무더위쉼터를 네이버 지도에서 바로 찾아드려요.
+          버튼을 누르면 현재 위치에서 가장 가까운 무더위쉼터까지 도보 길찾기를
+          바로 열어드려요.
         </p>
       </div>
       <button
         onClick={handleFindShelter}
         className="w-full rounded-lg bg-blue-600 px-6 py-4 text-lg font-semibold text-white hover:bg-blue-700"
       >
-        근처 무더위쉼터 찾기
+        근처 무더위쉼터 도보 길찾기
       </button>
       {status === "locating" && (
         <p className="text-sm text-gray-500">위치를 확인하는 중...</p>
       )}
       {status === "error" && (
         <p className="text-sm text-gray-500">
-          위치 확인이 안 돼서 전체 지역으로 검색했어요.
+          위치 확인 권한을 허용해야 길찾기를 열 수 있어요.
         </p>
       )}
     </div>
