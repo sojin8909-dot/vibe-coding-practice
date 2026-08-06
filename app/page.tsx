@@ -87,27 +87,14 @@ export default function HomePage() {
                   {doc.name}
                 </button>
                 {openDoc === doc.name && (
-                  <div className="mt-2 space-y-2 rounded-lg bg-blue-50 p-4 text-left text-lg text-gray-800">
-                    <p>
-                      <span className="font-semibold">필요한 것: </span>
-                      {doc.needed}
-                    </p>
-                    <p>
-                      <span className="font-semibold">발급 방법: </span>
-                      {doc.methods}
-                    </p>
-                    <p>
-                      <span className="font-semibold">발급 창구: </span>
-                      {doc.counter}
-                    </p>
+                  <div className="mt-2 space-y-2 rounded-lg bg-blue-50 p-4 text-left text-lg font-bold text-gray-900">
+                    <p>필요한 것: {doc.needed}</p>
+                    <p>발급 방법: {doc.methods}</p>
+                    <p>발급 창구: {doc.counter}</p>
                   </div>
                 )}
               </div>
             ))}
-            <p className="text-base text-gray-500">
-              수수료·절차는 바뀔 수 있으니 정확한 내용은 정부24(gov.kr) 또는
-              해당 창구에서 다시 확인해주세요.
-            </p>
           </div>
         )}
       </div>
