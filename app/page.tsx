@@ -8,6 +8,14 @@ const PLACE_BUTTONS = [
   { label: "근처 동사무소 찾기", query: "동사무소" },
   { label: "근처 면사무소 찾기", query: "면사무소" },
   { label: "근처 시청 찾기", query: "시청" },
+  { label: "근처 버스정류장 찾기", query: "버스정류장" },
+];
+
+const EMERGENCY_CONTACTS = [
+  { label: "119 (화재·구급)", tel: "119" },
+  { label: "112 (경찰)", tel: "112" },
+  { label: "치매상담콜센터 (1899-9988)", tel: "1899-9988" },
+  { label: "보건복지상담센터 (129)", tel: "129" },
 ];
 
 function openNaverMapSearch(query: string, coords: GeolocationCoordinates | null) {
@@ -53,6 +61,15 @@ export default function HomePage() {
           목록에서 원하는 곳을 눌러 도보 길찾기를 시작하세요.
         </p>
       </div>
+
+      <a
+        href="https://www.weather.go.kr/w/hazard/heatwave/overall.do"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block w-full rounded-lg bg-orange-500 px-6 py-5 text-xl font-semibold text-white hover:bg-orange-600"
+      >
+        오늘 폭염특보 확인
+      </a>
 
       <div className="space-y-3">
         {PLACE_BUTTONS.map((button) => (
@@ -131,6 +148,19 @@ export default function HomePage() {
           위치 확인이 안 돼서 전체 지역으로 검색했어요.
         </p>
       )}
+
+      <div className="space-y-3 border-t-2 pt-6">
+        <h2 className="text-xl font-bold">긴급 연락처</h2>
+        {EMERGENCY_CONTACTS.map((contact) => (
+          <a
+            key={contact.tel}
+            href={`tel:${contact.tel}`}
+            className="block w-full rounded-lg bg-red-600 px-6 py-5 text-xl font-semibold text-white hover:bg-red-700"
+          >
+            {contact.label}
+          </a>
+        ))}
+      </div>
 
       <div className="space-y-2 border-t pt-6">
         <p className="text-lg text-gray-600">
