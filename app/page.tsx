@@ -1,20 +1,60 @@
-import dynamic from "next/dynamic";
-import { shelters } from "@/lib/data";
+"use client";
 
-const ShelterMap = dynamic(() => import("@/components/ShelterMap"), {
-  ssr: false,
-});
+import { useState } from "react";
+
+function openNaverMapSearch(coords: GeolocationCoordinates | null) {
+  const query = encodeURIComponent("무더위쉼터");
+  const url =
+    coords != null
+      ? `https://map.naver.com/p/search/${query}?c=${coords.longitude},${coords.latitude},15,0,0,0,dh`
+      : `https://map.naver.com/p/search/${query}`;
+  window.open(url, "_blank");
+}
 
 export default function HomePage() {
+  const [status, setStatus] = useState<"idle" | "locating" | "error">("idle");
+
+  function handleFindShelter() {
+    if (!navigator.geolocation) {
+      openNaverMapSearch(null);
+      return;
+    }
+
+    setStatus("locating");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setStatus("idle");
+        openNaverMapSearch(position.coords);
+      },
+      () => {
+        setStatus("error");
+        openNaverMapSearch(null);
+      }
+    );
+  }
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 text-center">
       <div>
-        <h1 className="text-xl font-semibold">쉼터 지도</h1>
+        <h1 className="text-xl font-semibold">폭염지킴이</h1>
         <p className="text-sm text-gray-600">
-          진주시 경로당·동주민센터 위치입니다. 마커를 눌러 상세 정보를 확인하세요.
+          버튼을 누르면 현재 위치 근처 무더위쉼터를 네이버 지도에서 바로 찾아드려요.
         </p>
       </div>
-      <ShelterMap shelters={shelters} />
+      <button
+        onClick={handleFindShelter}
+        className="w-full rounded-lg bg-blue-600 px-6 py-4 text-lg font-semibold text-white hover:bg-blue-700"
+      >
+        근처 무더위쉼터 찾기
+      </button>
+      {status === "locating" && (
+        <p className="text-sm text-gray-500">위치를 확인하는 중...</p>
+      )}
+      {status === "error" && (
+        <p className="text-sm text-gray-500">
+          위치 확인이 안 돼서 전체 지역으로 검색했어요.
+        </p>
+      )}
     </div>
   );
 }
