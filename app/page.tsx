@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { documentGuides } from "@/lib/documents";
 
 const PLACE_BUTTONS = [
   { label: "근처 무더위쉼터 찾기", query: "무더위쉼터" },
@@ -21,6 +22,7 @@ function openNaverMapSearch(query: string, coords: GeolocationCoordinates | null
 export default function HomePage() {
   const [status, setStatus] = useState<"idle" | "locating" | "error">("idle");
   const [showSortGuide, setShowSortGuide] = useState(false);
+  const [showDocGuide, setShowDocGuide] = useState(false);
 
   function handleFind(query: string) {
     if (!navigator.geolocation) {
@@ -80,6 +82,39 @@ export default function HomePage() {
             </ol>
             <p className="mt-2 text-xs text-gray-500">
               네이버 지도 앱 버전에 따라 위치나 표현이 조금 다를 수 있어요.
+            </p>
+          </div>
+        )}
+      </div>
+      <div>
+        <button
+          onClick={() => setShowDocGuide((prev) => !prev)}
+          className="text-sm text-blue-600 underline"
+        >
+          많이 찾는 서류 발급 안내 (10종)
+        </button>
+        {showDocGuide && (
+          <div className="mt-2 space-y-3 rounded-lg bg-blue-50 p-4 text-left text-sm text-gray-700">
+            {documentGuides.map((doc) => (
+              <div key={doc.name} className="border-b border-blue-100 pb-2 last:border-0">
+                <p className="font-semibold">{doc.name}</p>
+                <p className="mt-1">
+                  <span className="font-medium">필요한 것: </span>
+                  {doc.needed}
+                </p>
+                <p>
+                  <span className="font-medium">발급 방법: </span>
+                  {doc.methods}
+                </p>
+                <p>
+                  <span className="font-medium">발급 창구: </span>
+                  {doc.counter}
+                </p>
+              </div>
+            ))}
+            <p className="text-xs text-gray-500">
+              수수료·절차는 바뀔 수 있으니 정확한 내용은 정부24(gov.kr) 또는
+              해당 창구에서 다시 확인해주세요.
             </p>
           </div>
         )}
